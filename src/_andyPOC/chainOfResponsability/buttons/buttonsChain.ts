@@ -1,5 +1,5 @@
 
-import { Handler, Request } from "../chainOfResponsability.interfaces";
+import { Handler, Event } from "../chainOfResponsability.interfaces";
 
 class ButtonsChain implements Handler {
   constructor(private next?: Handler) {}
@@ -8,31 +8,49 @@ class ButtonsChain implements Handler {
     this.next = handler;
   }
 
-  handle(request: Request): void {
-    console.log('ButtonsChain');
+  handle(event: Event): void {
+    if (this.next) {
+      this.next.handle(event);
+    }
   }
 }
 
 class Button extends ButtonsChain {
-  handle(request: Request): void {
-    console.log('Button');
+  handle(event: Event): void {
+    if (event.handles === 'button') {
+      console.log('Button');
+    } else {
+      super.handle(event);
+    }
   }
 }
 
 class SubPanel extends ButtonsChain {
-  handle(request: Request): void {
-    console.log('SubPanel');
+  handle(event: Event): void {
+    if (event.handles === 'subPanel') {
+      console.log('SubPanel');
+    } else {
+      super.handle(event);
+    }
   }
 }
 class Panel extends ButtonsChain {
-  handle(request: Request): void {
-    console.log('Panel');
+  handle(event: Event): void {
+    if (event.handles === 'panel') {
+      console.log('Panel');
+    } else {
+      super.handle(event);
+    }
   }
 }
 
 class Ventana extends ButtonsChain {
-  handle(request: Request): void {
-    console.log('Ventana');
+  handle(event: Event): void {
+    if (event.handles === 'ventana') {
+      console.log('Ventana');
+    } else {
+      super.handle(event);
+    }
   }
 }
 
