@@ -1,7 +1,7 @@
 
 import { Handler, Event } from "../chainOfResponsability.interfaces";
 
-class ButtonsChain implements Handler {
+abstract class ButtonsChain implements Handler {
   constructor(private next?: Handler) {}
 
   setNext(handler: Handler): void {
