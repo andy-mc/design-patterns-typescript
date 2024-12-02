@@ -1,7 +1,7 @@
 import {
   Request,
   Handler,
-} from './chainOfResponsability.interfaces';
+} from '../chainOfResponsability.interfaces';
 
 import { 
   Juan, 

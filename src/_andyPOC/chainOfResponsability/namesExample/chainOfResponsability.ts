@@ -1,7 +1,7 @@
 import {
   Request,
   Handler
-} from './chainOfResponsability.interfaces';
+} from '../chainOfResponsability.interfaces';
 
 class ChainOfResponsability implements Handler {
   constructor(private next: Handler | null = null) {}
