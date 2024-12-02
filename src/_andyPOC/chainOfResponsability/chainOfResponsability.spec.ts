@@ -99,8 +99,5 @@ describe('ChainOfResponsability', () => {
     expect(juanMock.handle).toHaveBeenCalledWith({userId: 3});
     expect(pedroMock.handle).toHaveBeenCalledWith({userId: 3});
     expect(mariaMock.handle).toHaveBeenCalledWith({userId: 3});
-
-    // marian this.next.handle(request); should no be called
-    
   });
 });
