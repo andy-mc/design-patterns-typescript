@@ -2,7 +2,7 @@
 import { Handler, Request } from "../chainOfResponsability.interfaces";
 
 class ButtonsChain implements Handler {
-  constructor(private next: Handler) {}
+  constructor(private next?: Handler) {}
 
   setNext(handler: Handler): void {
     this.next = handler;
@@ -13,6 +13,33 @@ class ButtonsChain implements Handler {
   }
 }
 
+class Button extends ButtonsChain {
+  handle(request: Request): void {
+    console.log('Button');
+  }
+}
+
+class SubPanel extends ButtonsChain {
+  handle(request: Request): void {
+    console.log('SubPanel');
+  }
+}
+class Panel extends ButtonsChain {
+  handle(request: Request): void {
+    console.log('Panel');
+  }
+}
+
+class Ventana extends ButtonsChain {
+  handle(request: Request): void {
+    console.log('Ventana');
+  }
+}
+
 export {
-  ButtonsChain
+  ButtonsChain,
+  Button,
+  SubPanel,
+  Panel,
+  Ventana
 }
