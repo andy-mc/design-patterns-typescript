@@ -11,8 +11,9 @@ namespace andyChainExample {
       this.tooltipText = tooltipText;
     }
 
-    setContainer(container: Container): void {
+    setContainer(container: Container): Component {
       this.container = container;
+      return this;
     }
 
     showHelp(): string {
@@ -65,16 +66,17 @@ namespace andyChainExample {
 
   const container = new Container();
 
-  const dialog = new Dialog();
+  const dialog = new Dialog("Dialog Help");
   const panel = new Panel();
-  const button = new Button();
+  const ok = new Button("Ok help");
+  const cancel = new Button();
 
-  panel.add(button);
+  panel.add(ok);
+  panel.add(cancel);
   dialog.add(panel);
 
-  const help = button.showHelp();
   console.log("\n")
-  console.log("help: ", help);
+  console.log("ok help: ", ok.showHelp());
   console.log("\n")
+  console.log("cancel help: ", cancel.showHelp());
 }
-
