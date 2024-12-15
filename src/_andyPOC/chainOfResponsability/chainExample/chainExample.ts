@@ -1,94 +1,123 @@
-namespace ChainExample {
+namespace chainExample {
   interface ComponentWithContextualHelp {
     showHelp(): void;
   }
-
+  
   abstract class Component implements ComponentWithContextualHelp {
-    constructor(
-      private toottipText: string,
-      public container: Container
-    ) {}
+      protected container: Container | null = null;
+      protected tooltipText: string | null = null;
 
-    showHelp() {
-      if (this.toottipText) {
-        console.log(this.toottipText);
-      } else {
-        this.container.showHelp();
+      constructor(tooltipText?: string) {
+          this.tooltipText = tooltipText || null;
       }
-    }
+
+      showHelp(): void {
+          if (this.tooltipText) {
+              console.log(`Showing tooltip: ${this.tooltipText}`);
+          } else if (this.container) {
+              this.container.showHelp();
+          }
+      }
   }
 
+  // Container class that can hold other components
   abstract class Container extends Component {
-    constructor(protected children: Component[]) {
-      super("", null);
-    }
+      protected children: Component[] = [];
 
-    add(child: Component) {
-      this.children.push(child);
-      child.container = this;
-    }
+      add(child: Component): void {
+          this.children.push(child);
+          // @ts-ignore - We know container exists in Component
+          child.container = this;
+      }
   }
 
+  // Button class (simple component)
   class Button extends Component {
-    constructor(toottipText: string, container: Container) {
-      super(toottipText, container);
-    }
+      constructor(private x: number, private y: number, private width: number, 
+                  private height: number, private label: string, tooltipText?: string) {
+          super(tooltipText);
+      }
   }
 
+  // Panel class (complex container)
   class Panel extends Container {
-    private modalHelpText: string;
+      public modalHelpText: string | null = null;
 
-    constructor(children: Component[], modalHelpText: string) {
-      super(children);
-      this.modalHelpText = modalHelpText;
-    }
-
-    showHelp() {
-      if (this.modalHelpText) {
-        console.log(this.modalHelpText);
-      } else {
-        super.showHelp();
+      constructor(private x: number, private y: number, private width: number, 
+                  private height: number, modalHelpText?: string) {
+          super();
+          this.modalHelpText = modalHelpText || null;
       }
-    }
+
+      showHelp(): void {
+          if (this.modalHelpText) {
+              console.log(`Showing modal help: ${this.modalHelpText}`);
+          } else {
+              super.showHelp();
+          }
+      }
   }
 
+  // Dialog class (root container)
   class Dialog extends Container {
-    private wikiPageURL: string;
+      public wikiPageURL: string | null = null;
 
-    constructor(children: Component[], wikiPageURL: string) {
-      super(children);
-      this.wikiPageURL = wikiPageURL;
-    }
-
-    showHelp() {
-      if (this.wikiPageURL) {
-        console.log(this.wikiPageURL);
-      } else {
-        super.showHelp();
+      constructor(private title: string, wikiPageURL?: string) {
+          super();
+          this.wikiPageURL = wikiPageURL || null;
       }
-    }
+
+      showHelp(): void {
+          if (this.wikiPageURL) {
+              console.log(`Opening wiki page: ${this.wikiPageURL}`);
+          } else {
+              super.showHelp();
+          }
+      }
   }
 
+  // Application class to demonstrate usage
   class Application {
-    createUI() {
-      // const dialog = new Dialog("Budget Reports")
-      // dialog.wikiPageURL = "http://wikiPageURL"
-      
-      // const panel = new Panel("Panel help")
-      // panel.modalHelpText = "This panel does..."
-      
-      const ok = new Button("OK", [])
-      // ok.toottipText = "This is an OK button that..."
-      
-      panel.add(ok)
-      // panel.add(cancel)
-      // dialog.add(panel)
+      private dialog?: Dialog;
 
-      ok.showHelp()
-    }
+      createUI(): any {
+          // Create dialog
+          this.dialog = new Dialog("Budget Reports");
+          this.dialog.wikiPageURL = "http://wiki.example.com/budget-reports";
+
+          // Create panel
+          const panel = new Panel(0, 0, 400, 800);
+          panel.modalHelpText = "This panel shows budget reports...";
+
+          // Create buttons
+          const okButton = new Button(250, 760, 50, 20, "OK", 
+                                    "This is an OK button that confirms the operation");
+          const cancelButton = new Button(320, 760, 50, 20, "Cancel");
+
+          // Assemble the UI hierarchy
+          panel.add(okButton);
+          panel.add(cancelButton);
+          this.dialog.add(panel);
+
+          return {
+            dialog: this.dialog,
+            panel: panel,
+            okButton: okButton,
+            cancelButton: cancelButton
+          }
+      }
+
+      onF1KeyPress(component: Component): void {
+          // Simulate getting component at mouse coordinates
+          component.showHelp();
+      }
   }
 
-  const app = new Application()
-  app.createUI()
+  // Usage example
+  const app = new Application();
+  const {okButton, cancelButton, panel, dialog} = app.createUI();
+  // app.onF1KeyPress(okButton);
+  // app.onF1KeyPress(cancelButton);
+  app.onF1KeyPress(panel);
+  app.onF1KeyPress(dialog);
 }
-
