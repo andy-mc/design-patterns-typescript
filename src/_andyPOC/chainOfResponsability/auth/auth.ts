@@ -1,7 +1,6 @@
 namespace Auth {
   interface Handler<Request = string, Result = string> {
     setNext(handler: Handler<Request, Result>): Handler<Request, Result>;
-
     handle(request: Request): Result;
   }
 
@@ -76,7 +75,7 @@ namespace Auth {
   function authenticate(handler: AuthenticationHandler, requests: AuthenticationRequest[]): void {
     for (const request of requests) {
       const result = handler.handle(request);
-      console.log(result);
+      console.log(`\n${JSON.stringify(result)}\n`);
     }
   }
 
@@ -89,7 +88,8 @@ namespace Auth {
   const requests: AuthenticationRequest[] = [
     { user: { name: 'admin', password: 'password' } },
     { apiKey: 'my-api-key' },
-    { jwtToken: 'my-jwt-token' }
+    { jwtToken: 'my-jwt-token' },
+    { user: { name: 'admin', password: 'wrong-password' } },
   ];
 
   authenticate(basicAuthHandler, requests);
