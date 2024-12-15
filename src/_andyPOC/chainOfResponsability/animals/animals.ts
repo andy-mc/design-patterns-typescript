@@ -72,8 +72,8 @@ namespace Animals {
 
   monkey.setNext(squirrel).setNext(dog);
 
-  // console.log('\nChain: Monkey > Squirrel > Dog\n');
-  // clientCode(monkey);
+  console.log('\nChain: Monkey > Squirrel > Dog\n');
+  clientCode(monkey);
   console.log('\n');
 
   console.log('Subchain: Squirrel > Dog\n');
