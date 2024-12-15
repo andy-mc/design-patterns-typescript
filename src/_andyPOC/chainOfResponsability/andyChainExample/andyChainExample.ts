@@ -1,58 +1,80 @@
-interface ComponentWithContextualHelp {
-  showHelp(): void;
-}
+namespace andyChainExample {
+  interface ComponentWithContextualHelp {
+    showHelp(): string;
+  }
 
-abstract class ComponentCOR implements ComponentWithContextualHelp {
-  constructor(private container: Container | null, public toottipText: string) {}
+  abstract class Component implements ComponentWithContextualHelp {
+    private container?: Container
+    public tooltipText?: string
 
-  showHelp(): void {
-    if (!this.container) {
-      console.log("No help available");
-      return;
+    constructor(tooltipText?: string) {
+      this.tooltipText = tooltipText;
     }
 
-    if (this.toottipText) {
-      console.log(this.toottipText);
-    } else {
-      this.container.showHelp();
+    setContainer(container: Container): void {
+      this.container = container;
+    }
+
+    showHelp(): string {
+      if (this.tooltipText) {
+        return this.tooltipText;
+      } 
+
+      return this.container ? this.container.showHelp() : " - ";
     }
   }
-}
 
-class Container {
-  constructor(private children: ComponentCOR[]) {}
+  class Container extends Component {
+    private children: Component[] = []
 
-  add(child: ComponentCOR): void {
-    this.children.push(child);
+    add(child: Component): void {
+      child.setContainer(this);
+    }
   }
 
-  showHelp(): void {
-    this.children.forEach((child) => child.showHelp());
+  class Button extends Component {  
   }
+
+  class Panel extends Container {
+    constructor(private modalHelpText?: string) {
+      super();
+    }
+
+    showHelp(): string {
+      if (this.modalHelpText) {
+        return this.modalHelpText
+      } 
+
+      return super.showHelp();
+    }
+  }
+
+  class Dialog extends Container {
+    constructor(private wikiPageURL?: string) {
+      super();
+    }
+
+    showHelp(): string {
+      if (this.wikiPageURL) {
+        return this.wikiPageURL
+      }
+
+      return super.showHelp();
+    }
+  }
+
+  const container = new Container();
+
+  const dialog = new Dialog();
+  const panel = new Panel();
+  const button = new Button();
+
+  panel.add(button);
+  dialog.add(panel);
+
+  const help = button.showHelp();
+  console.log("\n")
+  console.log("help: ", help);
+  console.log("\n")
 }
 
-class Button extends ComponentCOR {
-  constructor(container: Container | null, toottipText: string) {
-    super(container, toottipText);
-  }
-}
-
-class Panel extends ComponentCOR {
-  constructor(container: Container | null, private modalHelpText: string) {
-    super(container, modalHelpText);
-  }
-}
-
-class Dialog extends ComponentCOR {
-  constructor(container: Container | null, private wikiPageURL: string) {
-    super(container, wikiPageURL);
-  }
-}
-
-const container = new Container([]);
-
-const panel = new Panel(null, "");
-const dialog = new Dialog(panel, "Dialog help");
-const button = new Button(dialog, "Button help");
-
-button.showHelp();
